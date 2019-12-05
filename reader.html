@@ -47,6 +47,7 @@
     Instascan.Camera.getCameras().then(function (cameras) {
         if (cameras.length > 0) {
             scanner.start(cameras[0]);
+
         } else {
             console.error('No cameras found.');
             alert("No cameras found.");
@@ -58,7 +59,27 @@
         console.log(content);
         document.getElementById("content").innerHTML = content;
     });
-</script>
+    let flipBtn = document.querySelector('#flip-btn');
+    let shouldFaceUser = true;
+    let supports = navigator.mediaDevices.getSupportedConstraints();
+    if( supports['facingMode'] === true ) {
+        flipBtn.disabled = false;
+    }
 
+    let stream = null;
+    flipBtn.addEventListener('click', function(){
+        if( stream == null ) return
+        // we need to flip, stop everything
+        stream.getTracks().forEach(t => {
+            t.stop();
+        });
+        // toggle / flip
+        shouldFaceUser = !shouldFaceUser;
+        capture();
+    })
+</script>
+<button disabled id="flip-btn">
+    Flip Camera
+</button>
 </body>
 </html>
